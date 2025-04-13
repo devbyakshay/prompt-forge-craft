@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Zap, Code, PenTool, MousePointerSquare } from 'lucide-react';
+import { ArrowRight, Sparkles, Zap, Code, PenTool, MousePointer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SettingsDialog from '@/components/SettingsDialog';
 
@@ -171,7 +171,7 @@ const LandingPage = () => {
               >
                 <Link to="/tool" className="flex items-center gap-2">
                   <span>Try Promgine Now</span>
-                  <MousePointerSquare className="w-5 h-5 animate-bounce" />
+                  <MousePointer className="w-5 h-5 animate-bounce" />
                 </Link>
               </Button>
             </div>
