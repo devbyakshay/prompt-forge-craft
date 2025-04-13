@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import PromptForm from '@/components/PromptForm';
 import PromptOutput from '@/components/PromptOutput';
@@ -17,6 +17,9 @@ const Index = () => {
   const [customApiKey, setCustomApiKey] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [useCustomApiKey, setUseCustomApiKey] = useState(false);
+
+  // State for custom instructions
+  const [customInstructions, setCustomInstructions] = useState('');
   
   const [rawPrompt, setRawPrompt] = useState('');
   const [promptLength, setPromptLength] = useState('medium');
@@ -26,13 +29,40 @@ const Index = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
 
+  // Load saved settings from localStorage on component mount
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem('customApiKey');
+    if (savedApiKey) {
+      setCustomApiKey(savedApiKey);
+      setUseCustomApiKey(true);
+    }
+
+    const savedInstructions = localStorage.getItem('customInstructions');
+    if (savedInstructions) {
+      setCustomInstructions(savedInstructions);
+    }
+  }, []);
+
   // Get the current API key to use (default or custom)
   const getApiKey = () => {
     return useCustomApiKey && customApiKey ? customApiKey : DEFAULT_API_KEY;
   };
 
-  const handleSaveApiKey = () => {
+  const handleSaveSettings = () => {
     setUseCustomApiKey(!!customApiKey);
+    
+    // Save settings to localStorage
+    if (customApiKey) {
+      localStorage.setItem('customApiKey', customApiKey);
+    } else {
+      localStorage.removeItem('customApiKey');
+    }
+    
+    if (customInstructions) {
+      localStorage.setItem('customInstructions', customInstructions);
+    } else {
+      localStorage.removeItem('customInstructions');
+    }
   };
 
   const handleSubmit = async () => {
@@ -53,6 +83,7 @@ const Index = () => {
         outputFormat,
         focusArea,
         apiKey: getApiKey(),
+        customInstructions: customInstructions,
       });
       setEnhancedPrompt(result);
       toast({
@@ -94,7 +125,7 @@ const Index = () => {
             variants={fadeInUp}
           >
             <h1 className="text-4xl md:text-6xl font-bold gradient-text text-shadow">
-              Promgine
+              Prompt Engineer
             </h1>
             <p className="text-xl text-white/80 max-w-2xl mx-auto">
               Transform your raw prompts into detailed, structured, and powerful instructions for AI models
@@ -150,7 +181,9 @@ const Index = () => {
         onOpenChange={setIsSettingsOpen}
         apiKey={customApiKey}
         onApiKeyChange={setCustomApiKey}
-        onSave={handleSaveApiKey}
+        customInstructions={customInstructions}
+        onCustomInstructionsChange={setCustomInstructions}
+        onSave={handleSaveSettings}
       />
     </div>
   );

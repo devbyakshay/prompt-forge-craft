@@ -5,6 +5,7 @@ interface GeminiRequestOptions {
   outputFormat: string;
   focusArea: string;
   apiKey: string;
+  customInstructions?: string;
 }
 
 export const enhancePrompt = async ({
@@ -12,7 +13,8 @@ export const enhancePrompt = async ({
   length,
   outputFormat,
   focusArea,
-  apiKey
+  apiKey,
+  customInstructions
 }: GeminiRequestOptions): Promise<string> => {
   try {
     const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent";
@@ -66,7 +68,8 @@ export const enhancePrompt = async ({
         focusInstruction = "Balance clarity with creativity.";
     }
     
-    const systemPrompt = `
+    // Use custom instructions if provided, otherwise use default
+    const systemPrompt = customInstructions || `
 You are Promgine, an advanced prompt engineering assistant. Your task is to transform user-provided raw prompts into ${detailLevel} enhanced prompts that will produce better results when used with AI models.
 
 ${formatInstruction}
