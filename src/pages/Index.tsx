@@ -8,6 +8,10 @@ import SettingsDialog from '@/components/SettingsDialog';
 import { enhancePrompt } from '@/services/geminiApi';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import CustomCursor from '@/components/CustomCursor';
 
 const Index = () => {
   // Default Gemini API key
@@ -76,6 +80,8 @@ const Index = () => {
     }
 
     setIsProcessing(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     try {
       const result = await enhancePrompt({
         prompt: rawPrompt,
@@ -107,8 +113,15 @@ const Index = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   };
 
+  // Reset the output and form
+  const handleReset = () => {
+    setEnhancedPrompt('');
+    setRawPrompt('');
+  };
+
   return (
-    <div className="flex flex-col min-h-screen overflow-hidden">
+    <div className="flex flex-col min-h-screen overflow-hidden cursor-none">
+      <CustomCursor />
       <Header onOpenSettings={() => setIsSettingsOpen(true)} />
       
       <main className="flex-1 pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
@@ -124,6 +137,13 @@ const Index = () => {
             className="text-center space-y-6" 
             variants={fadeInUp}
           >
+            <Link to="/" className="inline-block mb-4">
+              <Button variant="ghost" size="sm" className="text-white/70 hover:text-white">
+                <ArrowLeft className="mr-1 h-4 w-4" />
+                Back to Home
+              </Button>
+            </Link>
+            
             <h1 className="text-4xl md:text-6xl font-bold gradient-text text-shadow">
               Prompt Engineer
             </h1>
@@ -132,6 +152,21 @@ const Index = () => {
             </p>
             <div className="divider-gradient w-full max-w-md mx-auto my-8"></div>
           </motion.div>
+
+          {isProcessing && (
+            <motion.div
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="text-center">
+                <Loader size="lg" text="Enhancing your prompt with AI magic..." />
+                <p className="mt-6 text-white/70 max-w-md mx-auto">Your enhanced prompt is being crafted with precision and creativity</p>
+              </div>
+            </motion.div>
+          )}
 
           <motion.div 
             className="gradient-border glass-card p-6 rounded-lg hover-translate"
@@ -151,14 +186,7 @@ const Index = () => {
             />
           </motion.div>
 
-          {isProcessing ? (
-            <motion.div 
-              className="flex flex-col items-center justify-center py-16 space-y-4"
-              variants={fadeInUp}
-            >
-              <Loader size="lg" text="Enhancing your prompt..." />
-            </motion.div>
-          ) : enhancedPrompt ? (
+          {enhancedPrompt ? (
             <motion.div 
               className="gradient-border glass-card p-6 rounded-lg hover-translate"
               variants={fadeInUp}
@@ -166,14 +194,81 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold gradient-text">Enhanced Result</h2>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleReset}
+                  className="border-white/10 hover:bg-white/10"
+                >
+                  Create New
+                </Button>
+              </div>
               <PromptOutput enhancedPrompt={enhancedPrompt} />
             </motion.div>
           ) : null}
         </motion.div>
       </main>
       
-      <footer className="border-t border-white/10 py-6 px-4 text-center text-white/50 backdrop-blur-sm">
-        <p>© 2025 Promgine. All rights reserved.</p>
+      <footer className="border-t border-white/10 py-6 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="mb-4 md:mb-0"
+          >
+            <motion.p 
+              className="text-white/50"
+              animate={{ 
+                opacity: [0.5, 1, 0.5],
+                scale: [1, 1.02, 1],
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 3,
+                repeatType: "reverse"
+              }}
+            >
+              <span className="gradient-text">Created with ❤️ by </span>
+              <a 
+                href="https://github.com/akshayp001" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:text-secondary transition-colors duration-300"
+              >
+                Akshay Patil
+              </a>
+            </motion.p>
+          </motion.div>
+          <div className="flex space-x-4">
+            <a 
+              href="https://github.com/akshayp001" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-white/50 hover:text-white transition-colors duration-300"
+            >
+              GitHub
+            </a>
+            <a 
+              href="https://www.linkedin.com/in/akshayp01/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-white/50 hover:text-white transition-colors duration-300"
+            >
+              LinkedIn
+            </a>
+            <a 
+              href="https://akshaypatil.xyz" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-white/50 hover:text-white transition-colors duration-300"
+            >
+              Portfolio
+            </a>
+          </div>
+        </div>
       </footer>
 
       <SettingsDialog

@@ -54,6 +54,11 @@
     background-attachment: fixed;
   }
 
+  /* Hide default cursor when using custom cursor */
+  .cursor-none {
+    cursor: none;
+  }
+
   ::selection {
     @apply bg-primary/25 text-primary-foreground;
   }
@@ -121,6 +126,10 @@
     animation-delay: 150ms;
   }
 
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+
   .glass-card {
     @apply backdrop-blur-md bg-black/30 border border-white/10 shadow-lg hover:shadow-glow transition-all duration-300;
   }
@@ -135,6 +144,66 @@
   
   .interactive-button {
     @apply transition-all duration-300 hover:shadow-glow active:scale-95;
+  }
+
+  /* Grid pattern for futuristic background */
+  .bg-grid-pattern {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Prose styles for markdown output */
+  .prose {
+    @apply text-white/80;
+  }
+
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    @apply text-white font-semibold my-4;
+  }
+
+  .prose h1 {
+    @apply text-2xl;
+  }
+
+  .prose h2 {
+    @apply text-xl;
+  }
+
+  .prose h3 {
+    @apply text-lg;
+  }
+
+  .prose strong {
+    @apply text-white;
+  }
+
+  .prose a {
+    @apply text-primary hover:text-primary/80 underline;
+  }
+
+  .prose ul, .prose ol {
+    @apply pl-6 my-4;
+  }
+
+  .prose ul li, .prose ol li {
+    @apply mb-2;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-primary/30 pl-4 italic text-white/70;
+  }
+
+  .prose pre {
+    @apply bg-black/50 p-4 rounded-md my-4 overflow-x-auto;
+  }
+
+  .prose code {
+    @apply bg-black/40 px-1 py-0.5 rounded text-white/90;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
   }
 }
 

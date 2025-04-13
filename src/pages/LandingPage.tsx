@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Zap, Code, PenTool, MousePointer } from 'lucide-react';
+import { ArrowRight, Sparkles, Zap, Code, PenTool, MousePointer, Github, Linkedin, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SettingsDialog from '@/components/SettingsDialog';
+import CustomCursor from '@/components/CustomCursor';
 
 const LandingPage = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -48,17 +49,45 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col overflow-hidden">
+    <div className="min-h-screen flex flex-col overflow-hidden cursor-none">
+      <CustomCursor />
       <Header onOpenSettings={() => setIsSettingsOpen(true)} isLandingPage={true} />
       
-      {/* Hero Section */}
-      <section className="flex-1 pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full filter blur-3xl animate-pulse" />
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/10 rounded-full filter blur-3xl animate-pulse animation-delay-150" />
-        </div>
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full filter blur-3xl animate-pulse" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/10 rounded-full filter blur-3xl animate-pulse animation-delay-150" />
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-secondary/5 rounded-full filter blur-3xl animate-pulse animation-delay-300" />
         
+        {/* Futuristic grid */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-10" />
+        
+        {/* Floating particles */}
+        {[...Array(20)].map((_, index) => (
+          <motion.div
+            key={index}
+            className="absolute bg-white/10 rounded-full w-1 h-1"
+            style={{ 
+              top: `${Math.random() * 100}%`, 
+              left: `${Math.random() * 100}%` 
+            }}
+            animate={{
+              opacity: [0.2, 0.8, 0.2],
+              scale: [1, 1.5, 1],
+              y: [0, -20, 0]
+            }}
+            transition={{
+              duration: 3 + Math.random() * 5,
+              repeat: Infinity,
+              repeatType: "reverse",
+              delay: Math.random() * 2
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Hero Section */}
+      <section className="flex-1 pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden z-10">
         <div className="max-w-6xl mx-auto">
           <motion.div 
             initial="hidden"
@@ -153,6 +182,65 @@ const LandingPage = () => {
             ))}
           </motion.div>
 
+          {/* Developer Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.6 }}
+            className="mt-32 text-center max-w-3xl mx-auto"
+          >
+            <h2 className="text-2xl font-semibold gradient-text mb-6">About the Developer</h2>
+            <div className="glass-card p-8 rounded-xl">
+              <motion.div 
+                className="w-24 h-24 rounded-full bg-gradient-primary mx-auto mb-5 flex items-center justify-center shadow-glow"
+                animate={{
+                  boxShadow: ['0 0 20px rgba(74, 144, 226, 0.3)', '0 0 30px rgba(74, 144, 226, 0.6)', '0 0 20px rgba(74, 144, 226, 0.3)']
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              >
+                <span className="text-white text-2xl font-bold">AP</span>
+              </motion.div>
+              
+              <h3 className="text-xl font-semibold text-white mb-2">Akshay Patil</h3>
+              <p className="text-white/70 max-w-lg mx-auto mb-6">
+                A passionate developer with expertise in AI technologies and web development. 
+                Akshay specializes in creating intuitive, powerful tools that leverage cutting-edge 
+                AI capabilities to solve real-world problems.
+              </p>
+              
+              <div className="flex justify-center space-x-4">
+                <a 
+                  href="https://github.com/akshayp001" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="p-2 bg-black/30 rounded-full hover:bg-gradient-primary transition-all duration-300 hover:scale-110"
+                >
+                  <Github className="w-5 h-5" />
+                </a>
+                <a 
+                  href="https://www.linkedin.com/in/akshayp01/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="p-2 bg-black/30 rounded-full hover:bg-gradient-primary transition-all duration-300 hover:scale-110"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+                <a 
+                  href="https://akshaypatil.xyz" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="p-2 bg-black/30 rounded-full hover:bg-gradient-primary transition-all duration-300 hover:scale-110"
+                >
+                  <Globe className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+          </motion.div>
+
           {/* CTA Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -180,8 +268,30 @@ const LandingPage = () => {
       </section>
       
       {/* Footer */}
-      <footer className="border-t border-white/10 py-6 px-4 text-center text-white/50 backdrop-blur-sm">
-        <p>© 2025 Promgine. All rights reserved.</p>
+      <footer className="border-t border-white/10 py-6 px-4 text-center backdrop-blur-sm relative z-10">
+        <div className="max-w-6xl mx-auto">
+          <motion.p 
+            className="text-white/50"
+            animate={{ 
+              opacity: [0.5, 1, 0.5],
+              scale: [1, 1.02, 1],
+            }}
+            transition={{ 
+              repeat: Infinity, 
+              duration: 3,
+              repeatType: "reverse"
+            }}
+          >
+            <a 
+              href="https://github.com/akshayp001" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block gradient-text hover:text-white transition-colors duration-300"
+            >
+              Created with ❤️ by Akshay Patil
+            </a>
+          </motion.p>
+        </div>
       </footer>
       
       <SettingsDialog
