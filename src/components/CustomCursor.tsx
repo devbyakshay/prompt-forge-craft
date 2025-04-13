@@ -2,15 +2,23 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const CustomCursor = () => {
+interface CustomCursorProps {
+  isEnabled: boolean;
+}
+
+const CustomCursor = ({ isEnabled = true }: CustomCursorProps) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [clicked, setClicked] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    if (!isEnabled) return;
+    
     const updatePosition = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
-      if (!isVisible) setIsVisible(true);
+      requestAnimationFrame(() => {
+        setPosition({ x: e.clientX, y: e.clientY });
+        if (!isVisible) setIsVisible(true);
+      });
     };
 
     const handleMouseDown = () => setClicked(true);
@@ -31,7 +39,9 @@ const CustomCursor = () => {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, [isVisible]);
+  }, [isEnabled, isVisible]);
+
+  if (!isEnabled) return null;
 
   return (
     <>
@@ -44,7 +54,11 @@ const CustomCursor = () => {
               y: position.y - 16,
               scale: clicked ? 0.8 : 1,
             }}
-            transition={{ type: "spring", damping: 15 }}
+            transition={{ 
+              type: "spring", 
+              damping: 15,
+              stiffness: 150
+            }}
             style={{ 
               width: '32px', 
               height: '32px', 
@@ -59,7 +73,11 @@ const CustomCursor = () => {
               y: position.y - 4,
               scale: clicked ? 1.5 : 1,
             }}
-            transition={{ type: "spring", damping: 10 }}
+            transition={{ 
+              type: "spring", 
+              damping: 10,
+              stiffness: 150
+            }}
             style={{ 
               width: '8px', 
               height: '8px', 

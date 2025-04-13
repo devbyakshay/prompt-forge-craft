@@ -5,9 +5,11 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Eye, EyeOff, Key, Save, X, Wand2, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Key, Save, X, Wand2, RefreshCw, Sliders } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
 
 interface SettingsDialogProps {
   open: boolean;
@@ -16,6 +18,8 @@ interface SettingsDialogProps {
   onApiKeyChange?: (key: string) => void;
   customInstructions?: string;
   onCustomInstructionsChange?: (instructions: string) => void;
+  customCursorEnabled?: boolean;
+  onCustomCursorChange?: (enabled: boolean) => void;
   onSave?: () => void;
 }
 
@@ -64,11 +68,14 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
   onApiKeyChange = () => {},
   customInstructions = defaultCustomInstructions,
   onCustomInstructionsChange = () => {},
+  customCursorEnabled = true,
+  onCustomCursorChange = () => {},
   onSave = () => {}
 }) => {
   const [showKey, setShowKey] = useState(false);
   const [localApiKey, setLocalApiKey] = useState(apiKey);
   const [localCustomInstructions, setLocalCustomInstructions] = useState(customInstructions);
+  const [localCustomCursorEnabled, setLocalCustomCursorEnabled] = useState(customCursorEnabled);
   const { toast } = useToast();
   
   const handleSave = () => {
@@ -78,6 +85,10 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
     
     if (localCustomInstructions !== customInstructions) {
       onCustomInstructionsChange(localCustomInstructions);
+    }
+    
+    if (localCustomCursorEnabled !== customCursorEnabled) {
+      onCustomCursorChange(localCustomCursorEnabled);
     }
     
     onSave();
@@ -109,7 +120,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
         </DialogHeader>
         
         <Tabs defaultValue="api-key" className="flex-1 overflow-hidden flex flex-col">
-          <TabsList className="grid grid-cols-2 mb-4 bg-black/30">
+          <TabsList className="grid grid-cols-3 mb-4 bg-black/30">
             <TabsTrigger value="api-key" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
               <Key className="w-4 h-4 mr-2" />
               API Key
@@ -117,6 +128,10 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
             <TabsTrigger value="custom-instructions" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
               <Wand2 className="w-4 h-4 mr-2" />
               Custom Instructions
+            </TabsTrigger>
+            <TabsTrigger value="preferences" className="data-[state=active]:bg-gradient-primary data-[state=active]:text-white">
+              <Sliders className="w-4 h-4 mr-2" />
+              Preferences
             </TabsTrigger>
           </TabsList>
           
@@ -185,6 +200,29 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                   onChange={(e) => setLocalCustomInstructions(e.target.value)}
                   className="h-full min-h-[300px] bg-black/30 border-white/10 focus:border-primary/50 resize-none overflow-auto"
                 />
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="preferences" className="space-y-6 flex-1 overflow-auto p-1">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Sliders className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-semibold">Interface Preferences</h3>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="flex items-center justify-between space-x-2">
+                  <Label htmlFor="custom-cursor" className="cursor-pointer flex items-center gap-2">
+                    <span>Custom Cursor</span>
+                    <span className="text-xs text-white/60">(May improve performance when disabled)</span>
+                  </Label>
+                  <Switch
+                    id="custom-cursor"
+                    checked={localCustomCursorEnabled}
+                    onCheckedChange={setLocalCustomCursorEnabled}
+                  />
+                </div>
               </div>
             </div>
           </TabsContent>
