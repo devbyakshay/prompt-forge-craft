@@ -64,6 +64,7 @@
 
   .gradient-border {
     position: relative;
+    overflow: hidden;
   }
 
   .gradient-border::before {
@@ -81,6 +82,27 @@
     pointer-events: none;
   }
 
+  .gradient-border::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    padding: 1px;
+    background: linear-gradient(90deg, #8B5CF6 0%, #4A90E2 100%);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .gradient-border:hover::after {
+    opacity: 1;
+  }
+
   .text-shadow {
     text-shadow: 0 2px 10px rgba(74, 144, 226, 0.3);
   }
@@ -94,5 +116,44 @@
       rgba(74, 144, 226, 0.3) 80%, 
       transparent 100%);
   }
+
+  .animation-delay-150 {
+    animation-delay: 150ms;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-md bg-black/30 border border-white/10 shadow-lg hover:shadow-glow transition-all duration-300;
+  }
+  
+  .hover-translate {
+    @apply transition-transform duration-300 hover:-translate-y-1;
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+  
+  .interactive-button {
+    @apply transition-all duration-300 hover:shadow-glow active:scale-95;
+  }
 }
 
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4A90E2 0%, #8B5CF6 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #5a9be8 0%, #9b70f7 100%);
+}
