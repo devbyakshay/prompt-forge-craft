@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { BookOpenText, Github, Menu, X, LogIn, LogOut, User, UserPlus } from 'lucide-react';
 import { Button } from './ui/button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   Tooltip,
   TooltipContent,
@@ -26,10 +26,10 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
   const { user, signInWithGoogle, logout, signInAnonymously } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleNavigate = (path: string) => {
-    return (e: React.MouseEvent) => {
-      e.preventDefault();
+    return () => {
       setMobileMenuOpen(false);
       navigate(path);
     };
@@ -45,6 +45,7 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
       <Link to="/" className="flex items-center gap-3 group">
         <motion.div 
           whileHover={{ scale: 1.05, rotate: 5 }}
+          whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
           className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow transition-all duration-300 group-hover:shadow-glow-strong"
         >
@@ -53,6 +54,7 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
         <motion.h1 
           className="text-xl font-bold gradient-text text-shadow"
           whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
           Promgine
@@ -65,75 +67,86 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Link 
-            to="/tool" 
-            className={`text-sm ${isLandingPage || location.pathname === '/tool' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors px-3 py-2 rounded-md hover:bg-white/10`}
+          <Button 
+            variant="ghost"
+            className={`text-sm ${location.pathname === '/tool' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors px-3 py-2 rounded-md hover:bg-white/10`}
             onClick={handleNavigate('/tool')}
           >
             Tool
-          </Link>
+          </Button>
         </motion.div>
         
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Link 
-            to="/gallery" 
+          <Button 
+            variant="ghost"
             className={`text-sm ${location.pathname === '/gallery' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors px-3 py-2 rounded-md hover:bg-white/10`}
             onClick={handleNavigate('/gallery')}
           >
             Gallery
-          </Link>
+          </Button>
         </motion.div>
         
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Link 
-            to="/showcase" 
+          <Button 
+            variant="ghost"
             className={`text-sm ${location.pathname === '/showcase' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors px-3 py-2 rounded-md hover:bg-white/10`}
             onClick={handleNavigate('/showcase')}
           >
             Showcase
-          </Link>
+          </Button>
         </motion.div>
       </div>
       
       <div className="flex items-center gap-4">
         {!isLandingPage && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleNavigate('/')}
-            className="border-white/10 bg-black/30 hover:bg-white/10 hidden md:flex"
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <Link to="/">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleNavigate('/')}
+              className="border-white/10 bg-black/30 hover:bg-white/10 hidden md:flex"
+            >
               Back to Home
-            </Link>
-          </Button>
+            </Button>
+          </motion.div>
         )}
         
         {user ? (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="border border-white/10 rounded-full overflow-hidden h-8 w-8 p-0 hover:border-primary/50 hover:shadow-glow transition-all duration-300"
-              >
-                {user.photoURL ? (
-                  <img
-                    src={user.photoURL}
-                    alt="Profile"
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <User className="h-4 w-4" />
-                )}
-              </Button>
-            </DropdownMenuTrigger>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="border border-white/10 rounded-full overflow-hidden h-8 w-8 p-0 hover:border-primary/50 hover:shadow-glow transition-all duration-300 bg-transparent"
+                    >
+                      {user.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt="Profile"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <User className="h-4 w-4 m-auto text-white" />
+                      )}
+                    </motion.button>
+                  </DropdownMenuTrigger>
+                  <TooltipContent>
+                    <p>Your Account</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             <DropdownMenuContent align="end" className="bg-black/80 border-white/10 backdrop-blur-md">
               <DropdownMenuItem
                 onClick={logout}
@@ -146,16 +159,24 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
           </DropdownMenu>
         ) : (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="hover:bg-white/10 transition-all duration-300 flex gap-2 items-center hover:shadow-glow"
-              >
-                <LogIn className="w-4 h-4" />
-                <span className="hidden sm:inline">Sign In</span>
-              </Button>
-            </DropdownMenuTrigger>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex gap-2 items-center px-3 py-2 rounded-md border border-white/10 bg-black/30 hover:bg-white/10 hover:shadow-glow transition-all duration-300 text-white"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      <span className="hidden sm:inline">Sign In</span>
+                    </motion.button>
+                  </DropdownMenuTrigger>
+                  <TooltipContent>
+                    <p>Sign In Options</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             <DropdownMenuContent align="end" className="bg-black/80 border-white/10 backdrop-blur-md w-48">
               <DropdownMenuItem
                 onClick={signInWithGoogle}
@@ -242,39 +263,39 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
               whileHover={{ x: 5 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link 
-                to="/tool" 
-                className="p-2 hover:bg-white/5 rounded-md transition-colors block"
+              <Button 
+                variant="ghost"
+                className="w-full justify-start p-2 hover:bg-white/5 rounded-md transition-colors"
                 onClick={handleNavigate('/tool')}
               >
                 Tool
-              </Link>
+              </Button>
             </motion.div>
             
             <motion.div
               whileHover={{ x: 5 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link 
-                to="/gallery" 
-                className="p-2 hover:bg-white/5 rounded-md transition-colors block"
+              <Button 
+                variant="ghost"
+                className="w-full justify-start p-2 hover:bg-white/5 rounded-md transition-colors"
                 onClick={handleNavigate('/gallery')}
               >
                 Gallery
-              </Link>
+              </Button>
             </motion.div>
             
             <motion.div
               whileHover={{ x: 5 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link 
-                to="/showcase" 
-                className="p-2 hover:bg-white/5 rounded-md transition-colors block"
+              <Button 
+                variant="ghost"
+                className="w-full justify-start p-2 hover:bg-white/5 rounded-md transition-colors"
                 onClick={handleNavigate('/showcase')}
               >
                 Showcase
-              </Link>
+              </Button>
             </motion.div>
             
             {!isLandingPage && (
@@ -282,13 +303,13 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
                 whileHover={{ x: 5 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Link 
-                  to="/" 
-                  className="p-2 hover:bg-white/5 rounded-md transition-colors block"
+                <Button 
+                  variant="ghost"
+                  className="w-full justify-start p-2 hover:bg-white/5 rounded-md transition-colors"
                   onClick={handleNavigate('/')}
                 >
                   Back to Home
-                </Link>
+                </Button>
               </motion.div>
             )}
             
@@ -297,13 +318,13 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-white/10 bg-black/30 hover:bg-white/10 hover:shadow-glow transition-all duration-300"
+                  className="flex items-center justify-center gap-2 border-white/10 bg-black/30 hover:bg-white/10 hover:shadow-glow transition-all duration-300"
                   onClick={() => {
                     signInWithGoogle();
                     setMobileMenuOpen(false);
                   }}
                 >
-                  <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24">
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                       fill="#4285F4"
@@ -326,13 +347,13 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-white/10 bg-black/30 hover:bg-white/10 hover:shadow-glow transition-all duration-300"
+                  className="flex items-center justify-center gap-2 border-white/10 bg-black/30 hover:bg-white/10 hover:shadow-glow transition-all duration-300"
                   onClick={() => {
                     signInAnonymously();
                     setMobileMenuOpen(false);
                   }}
                 >
-                  <UserPlus className="w-4 h-4 mr-2" />
+                  <UserPlus className="w-4 h-4" />
                   Continue as Guest
                 </Button>
               </div>
