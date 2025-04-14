@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { BookOpenText, Github } from 'lucide-react';
+import React, { useState } from 'react';
+import { BookOpenText, Github, Menu, X, LogIn, LogOut, User } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import {
@@ -10,12 +10,22 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
   isLandingPage?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
+  const { user, signInWithGoogle, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <motion.header 
       initial={{ y: -20, opacity: 0 }}
@@ -40,6 +50,19 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
         </motion.h1>
       </Link>
       
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex items-center gap-6">
+        <Link to="/tool" className={`text-sm ${isLandingPage || location.pathname === '/tool' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors`}>
+          Tool
+        </Link>
+        <Link to="/gallery" className={`text-sm ${location.pathname === '/gallery' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors`}>
+          Gallery
+        </Link>
+        <Link to="/showcase" className={`text-sm ${location.pathname === '/showcase' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors`}>
+          Showcase
+        </Link>
+      </div>
+      
       <div className="flex items-center gap-4">
         {!isLandingPage && (
           <Button
@@ -52,6 +75,56 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
               Back to Home
             </Link>
           </Button>
+        )}
+        
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="border border-white/10 rounded-full overflow-hidden h-8 w-8 p-0"
+              >
+                {user.photoURL ? (
+                  <img
+                    src={user.photoURL}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <User className="h-4 w-4" />
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-black/80 border-white/10 backdrop-blur-md">
+              <DropdownMenuItem
+                onClick={logout}
+                className="flex items-center gap-2 cursor-pointer hover:bg-white/10"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Sign Out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="hover:bg-white/10 transition-all duration-300"
+                  onClick={signInWithGoogle}
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span className="sr-only">Sign In</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Sign In with Google</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
         
         <TooltipProvider>
@@ -74,7 +147,74 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+        
+        {/* Mobile menu button */}
+        <Button 
+          variant="ghost" 
+          size="icon"
+          className="md:hidden hover:bg-white/10"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </Button>
       </div>
+      
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="absolute top-full left-0 right-0 bg-black/90 backdrop-blur-md border-b border-white/10 py-4 px-6 md:hidden"
+        >
+          <nav className="flex flex-col gap-4">
+            <Link 
+              to="/tool" 
+              className="p-2 hover:bg-white/5 rounded-md transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Tool
+            </Link>
+            <Link 
+              to="/gallery" 
+              className="p-2 hover:bg-white/5 rounded-md transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Gallery
+            </Link>
+            <Link 
+              to="/showcase" 
+              className="p-2 hover:bg-white/5 rounded-md transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Showcase
+            </Link>
+            {!isLandingPage && (
+              <Link 
+                to="/" 
+                className="p-2 hover:bg-white/5 rounded-md transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Back to Home
+              </Link>
+            )}
+            {!user && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-2 border-white/10 bg-black/30 hover:bg-white/10"
+                onClick={() => {
+                  signInWithGoogle();
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign In with Google
+              </Button>
+            )}
+          </nav>
+        </motion.div>
+      )}
     </motion.header>
   );
 };

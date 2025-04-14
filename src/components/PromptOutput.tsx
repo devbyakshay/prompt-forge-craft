@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { Button } from './ui/button';
-import { Download, Copy, FileText, FileImage, File, Check } from 'lucide-react';
+import { Download, Copy, FileText, FileImage, File, Check, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ReactMarkdown from 'react-markdown';
 import { Card } from './ui/card';
 import { motion } from 'framer-motion';
+import PublishPromptDialog from './PublishPromptDialog';
 
 interface PromptOutputProps {
   enhancedPrompt: string;
@@ -97,6 +98,8 @@ const PromptOutput: React.FC<PromptOutputProps> = ({ enhancedPrompt }) => {
               Copy to clipboard
             </span>
           </Button>
+          
+          <PublishPromptDialog promptContent={enhancedPrompt} />
           
           <div className="flex gap-1">
             <Button 
