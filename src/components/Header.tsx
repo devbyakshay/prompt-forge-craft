@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { BookOpenText, Github, Menu, X, LogIn, LogOut, User, UserPlus } from 'lucide-react';
 import { Button } from './ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Tooltip,
   TooltipContent,
@@ -25,6 +25,15 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
   const { user, signInWithGoogle, logout, signInAnonymously } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleNavigate = (path: string) => {
+    return (e: React.MouseEvent) => {
+      e.preventDefault();
+      setMobileMenuOpen(false);
+      navigate(path);
+    };
+  };
 
   return (
     <motion.header 
@@ -52,15 +61,44 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
       
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-6">
-        <Link to="/tool" className={`text-sm ${isLandingPage || location.pathname === '/tool' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors`}>
-          Tool
-        </Link>
-        <Link to="/gallery" className={`text-sm ${location.pathname === '/gallery' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors`}>
-          Gallery
-        </Link>
-        <Link to="/showcase" className={`text-sm ${location.pathname === '/showcase' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors`}>
-          Showcase
-        </Link>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Link 
+            to="/tool" 
+            className={`text-sm ${isLandingPage || location.pathname === '/tool' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors px-3 py-2 rounded-md hover:bg-white/10`}
+            onClick={handleNavigate('/tool')}
+          >
+            Tool
+          </Link>
+        </motion.div>
+        
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Link 
+            to="/gallery" 
+            className={`text-sm ${location.pathname === '/gallery' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors px-3 py-2 rounded-md hover:bg-white/10`}
+            onClick={handleNavigate('/gallery')}
+          >
+            Gallery
+          </Link>
+        </motion.div>
+        
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Link 
+            to="/showcase" 
+            className={`text-sm ${location.pathname === '/showcase' ? 'text-white' : 'text-white/70 hover:text-white'} transition-colors px-3 py-2 rounded-md hover:bg-white/10`}
+            onClick={handleNavigate('/showcase')}
+          >
+            Showcase
+          </Link>
+        </motion.div>
       </div>
       
       <div className="flex items-center gap-4">
@@ -68,7 +106,7 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
           <Button
             variant="outline"
             size="sm"
-            asChild
+            onClick={handleNavigate('/')}
             className="border-white/10 bg-black/30 hover:bg-white/10 hidden md:flex"
           >
             <Link to="/">
@@ -83,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="border border-white/10 rounded-full overflow-hidden h-8 w-8 p-0"
+                className="border border-white/10 rounded-full overflow-hidden h-8 w-8 p-0 hover:border-primary/50 hover:shadow-glow transition-all duration-300"
               >
                 {user.photoURL ? (
                   <img
@@ -112,7 +150,7 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="hover:bg-white/10 transition-all duration-300 flex gap-2 items-center"
+                className="hover:bg-white/10 transition-all duration-300 flex gap-2 items-center hover:shadow-glow"
               >
                 <LogIn className="w-4 h-4" />
                 <span className="hidden sm:inline">Sign In</span>
@@ -157,17 +195,22 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="hover:bg-white/10 transition-all duration-300"
-                asChild
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <a href="https://github.com/akshayp001" target="_blank" rel="noopener noreferrer">
-                  <Github className="w-5 h-5" />
-                  <span className="sr-only">GitHub</span>
-                </a>
-              </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="hover:bg-white/10 transition-all duration-300 hover:shadow-glow"
+                  asChild
+                >
+                  <a href="https://github.com/akshayp001" target="_blank" rel="noopener noreferrer">
+                    <Github className="w-5 h-5" />
+                    <span className="sr-only">GitHub</span>
+                  </a>
+                </Button>
+              </motion.div>
             </TooltipTrigger>
             <TooltipContent>
               <p>View on GitHub</p>
@@ -195,42 +238,66 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
           className="absolute top-full left-0 right-0 bg-black/90 backdrop-blur-md border-b border-white/10 py-4 px-6 md:hidden"
         >
           <nav className="flex flex-col gap-4">
-            <Link 
-              to="/tool" 
-              className="p-2 hover:bg-white/5 rounded-md transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
+            <motion.div
+              whileHover={{ x: 5 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Tool
-            </Link>
-            <Link 
-              to="/gallery" 
-              className="p-2 hover:bg-white/5 rounded-md transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Gallery
-            </Link>
-            <Link 
-              to="/showcase" 
-              className="p-2 hover:bg-white/5 rounded-md transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Showcase
-            </Link>
-            {!isLandingPage && (
               <Link 
-                to="/" 
-                className="p-2 hover:bg-white/5 rounded-md transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
+                to="/tool" 
+                className="p-2 hover:bg-white/5 rounded-md transition-colors block"
+                onClick={handleNavigate('/tool')}
               >
-                Back to Home
+                Tool
               </Link>
+            </motion.div>
+            
+            <motion.div
+              whileHover={{ x: 5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link 
+                to="/gallery" 
+                className="p-2 hover:bg-white/5 rounded-md transition-colors block"
+                onClick={handleNavigate('/gallery')}
+              >
+                Gallery
+              </Link>
+            </motion.div>
+            
+            <motion.div
+              whileHover={{ x: 5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link 
+                to="/showcase" 
+                className="p-2 hover:bg-white/5 rounded-md transition-colors block"
+                onClick={handleNavigate('/showcase')}
+              >
+                Showcase
+              </Link>
+            </motion.div>
+            
+            {!isLandingPage && (
+              <motion.div
+                whileHover={{ x: 5 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link 
+                  to="/" 
+                  className="p-2 hover:bg-white/5 rounded-md transition-colors block"
+                  onClick={handleNavigate('/')}
+                >
+                  Back to Home
+                </Link>
+              </motion.div>
             )}
+            
             {!user && (
               <div className="flex flex-col gap-2 mt-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-white/10 bg-black/30 hover:bg-white/10"
+                  className="border-white/10 bg-black/30 hover:bg-white/10 hover:shadow-glow transition-all duration-300"
                   onClick={() => {
                     signInWithGoogle();
                     setMobileMenuOpen(false);
@@ -259,7 +326,7 @@ const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-white/10 bg-black/30 hover:bg-white/10"
+                  className="border-white/10 bg-black/30 hover:bg-white/10 hover:shadow-glow transition-all duration-300"
                   onClick={() => {
                     signInAnonymously();
                     setMobileMenuOpen(false);

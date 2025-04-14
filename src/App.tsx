@@ -10,7 +10,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import Gallery from '@/pages/Gallery';
 import Showcase from '@/pages/Showcase';
 import PageTransition from '@/components/PageTransition';
-import { Loader } from '@/components/Loader';
+import Loader from '@/components/Loader';
 
 const AppRoutes = createBrowserRouter([
   {
