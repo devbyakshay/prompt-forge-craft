@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
+import { User, onAuthStateChanged, signInWithPopup, signOut, signInAnonymously as firebaseSignInAnonymously } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 
@@ -8,6 +8,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInAnonymously: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await signInWithPopup(auth, googleProvider);
       toast({
         title: "Welcome!",
-        description: "You've successfully signed in.",
+        description: "You've successfully signed in with Google.",
       });
     } catch (error) {
       console.error("Error signing in with Google:", error);
@@ -41,6 +42,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         variant: "destructive",
         title: "Sign In Failed",
         description: "Could not sign in with Google. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signInAnonymously = async () => {
+    try {
+      setLoading(true);
+      await firebaseSignInAnonymously(auth);
+      toast({
+        title: "Welcome, Guest!",
+        description: "You've signed in as a guest user.",
+      });
+    } catch (error) {
+      console.error("Error signing in anonymously:", error);
+      toast({
+        variant: "destructive",
+        title: "Sign In Failed",
+        description: "Could not sign in as guest. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -68,6 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     user,
     loading,
     signInWithGoogle,
+    signInAnonymously,
     logout,
   };
 
