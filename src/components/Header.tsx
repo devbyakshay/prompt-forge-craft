@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BookOpenText, Github, Settings } from 'lucide-react';
+import { BookOpenText, Github } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from 'react-router-dom';
 import {
@@ -12,11 +12,10 @@ import {
 import { motion } from 'framer-motion';
 
 interface HeaderProps {
-  onOpenSettings?: () => void;
   isLandingPage?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ onOpenSettings, isLandingPage = false }) => {
+const Header: React.FC<HeaderProps> = ({ isLandingPage = false }) => {
   return (
     <motion.header 
       initial={{ y: -20, opacity: 0 }}
@@ -62,33 +61,9 @@ const Header: React.FC<HeaderProps> = ({ onOpenSettings, isLandingPage = false }
                 variant="ghost" 
                 size="icon"
                 className="hover:bg-white/10 transition-all duration-300"
-                onClick={onOpenSettings}
-              >
-                <motion.div
-                  whileHover={{ rotate: 90 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Settings className="w-5 h-5" />
-                </motion.div>
-                <span className="sr-only">Settings</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>API Key & Custom Instructions</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="icon"
-                className="hover:bg-white/10 transition-all duration-300"
                 asChild
               >
-                <a href="https://github.com/your-repo/promgine" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/akshayp001" target="_blank" rel="noopener noreferrer">
                   <Github className="w-5 h-5" />
                   <span className="sr-only">GitHub</span>
                 </a>

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import { 
@@ -9,8 +9,9 @@ import {
   SelectTrigger, 
   SelectValue 
 } from './ui/select';
-import { Wand2, Loader2 } from 'lucide-react';
+import { Wand2, Loader2, Globe, Mail, Database, Code } from 'lucide-react';
 import { Label } from './ui/label';
+import { motion } from 'framer-motion';
 
 interface PromptFormProps {
   rawPrompt: string;
@@ -25,6 +26,13 @@ interface PromptFormProps {
   onSubmit: () => void;
 }
 
+const promptModes = [
+  { value: "general", label: "General Prompt Engineer", icon: <Code className="w-5 h-5" /> },
+  { value: "website", label: "Website Prompt Engineer", icon: <Globe className="w-5 h-5" /> },
+  { value: "email", label: "Email Prompt Engineer", icon: <Mail className="w-5 h-5" /> },
+  { value: "backend", label: "Backend Prompt Engineer", icon: <Database className="w-5 h-5" /> },
+];
+
 const PromptForm: React.FC<PromptFormProps> = ({
   rawPrompt,
   setRawPrompt,
@@ -37,8 +45,51 @@ const PromptForm: React.FC<PromptFormProps> = ({
   isProcessing,
   onSubmit
 }) => {
+  const [selectedMode, setSelectedMode] = useState("general");
+  
   return (
     <div className="space-y-6 w-full">
+      {/* Prompt Modes */}
+      <div className="mb-8">
+        <Label className="mb-3 block text-lg font-medium">Prompt Engineering Mode</Label>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {promptModes.map((mode) => (
+            <motion.div
+              key={mode.value}
+              className={`relative overflow-hidden rounded-lg ${
+                selectedMode === mode.value 
+                  ? "ring-2 ring-primary bg-gradient-to-br from-primary/20 to-secondary/20" 
+                  : "bg-black/20 hover:bg-black/30"
+              } cursor-pointer transition-all p-4`}
+              onClick={() => setSelectedMode(mode.value)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {selectedMode === mode.value && (
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 opacity-50"
+                  animate={{
+                    background: [
+                      "radial-gradient(circle at 20% 20%, rgba(74, 144, 226, 0.1) 0%, rgba(74, 144, 226, 0) 70%)",
+                      "radial-gradient(circle at 80% 80%, rgba(74, 144, 226, 0.1) 0%, rgba(74, 144, 226, 0) 70%)",
+                      "radial-gradient(circle at 50% 20%, rgba(74, 144, 226, 0.1) 0%, rgba(74, 144, 226, 0) 70%)",
+                      "radial-gradient(circle at 20% 20%, rgba(74, 144, 226, 0.1) 0%, rgba(74, 144, 226, 0) 70%)",
+                    ]
+                  }}
+                  transition={{ duration: 8, repeat: Infinity }}
+                />
+              )}
+              <div className="flex flex-col items-center text-center justify-center space-y-2 z-10 relative">
+                <div className={`p-2 rounded-full ${selectedMode === mode.value ? "bg-primary/20" : "bg-black/20"} mb-1`}>
+                  {mode.icon}
+                </div>
+                <span className="text-sm font-medium">{mode.label}</span>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+      
       <div className="space-y-2">
         <Label htmlFor="prompt">Your Raw Prompt</Label>
         <Textarea
@@ -61,6 +112,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
               <SelectItem value="short">Short</SelectItem>
               <SelectItem value="medium">Medium</SelectItem>
               <SelectItem value="detailed">Detailed</SelectItem>
+              <SelectItem value="comprehensive">Comprehensive</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -75,6 +127,7 @@ const PromptForm: React.FC<PromptFormProps> = ({
               <SelectItem value="markdown">Markdown</SelectItem>
               <SelectItem value="plain">Plain Text</SelectItem>
               <SelectItem value="structured">Structured List</SelectItem>
+              <SelectItem value="json">JSON Format</SelectItem>
             </SelectContent>
           </Select>
         </div>

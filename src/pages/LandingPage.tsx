@@ -1,16 +1,12 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Zap, Code, PenTool, MousePointer, Github, Linkedin, Globe } from 'lucide-react';
+import { ArrowRight, Sparkles, Zap, Code, PenTool, Github, Linkedin, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import SettingsDialog from '@/components/SettingsDialog';
-import CustomCursor from '@/components/CustomCursor';
 
 const LandingPage = () => {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
@@ -49,11 +45,10 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col overflow-hidden cursor-none">
-      <CustomCursor />
-      <Header onOpenSettings={() => setIsSettingsOpen(true)} isLandingPage={true} />
+    <div className="min-h-screen flex flex-col overflow-hidden">
+      <Header isLandingPage={true} />
       
-      {/* Animated Background Elements */}
+      {/* Enhanced Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full filter blur-3xl animate-pulse" />
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/10 rounded-full filter blur-3xl animate-pulse animation-delay-150" />
@@ -63,13 +58,15 @@ const LandingPage = () => {
         <div className="absolute inset-0 bg-grid-pattern opacity-10" />
         
         {/* Floating particles */}
-        {[...Array(20)].map((_, index) => (
+        {[...Array(30)].map((_, index) => (
           <motion.div
             key={index}
-            className="absolute bg-white/10 rounded-full w-1 h-1"
+            className="absolute bg-white/20 rounded-full"
             style={{ 
               top: `${Math.random() * 100}%`, 
-              left: `${Math.random() * 100}%` 
+              left: `${Math.random() * 100}%`,
+              width: `${Math.random() * 5 + 1}px`,
+              height: `${Math.random() * 5 + 1}px`,
             }}
             animate={{
               opacity: [0.2, 0.8, 0.2],
@@ -84,6 +81,72 @@ const LandingPage = () => {
             }}
           />
         ))}
+        
+        {/* Digital circuits/lines - AI theme */}
+        <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+          <pattern id="circuit-pattern" patternUnits="userSpaceOnUse" width="100" height="100" patternTransform="scale(0.5)">
+            <path d="M100 0 L100 100 L0 100" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="0.5"></path>
+            <circle cx="100" cy="0" r="2" fill="rgba(74, 144, 226, 0.5)"></circle>
+            <circle cx="0" cy="100" r="2" fill="rgba(74, 144, 226, 0.5)"></circle>
+            <circle cx="100" cy="100" r="2" fill="rgba(74, 144, 226, 0.5)"></circle>
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#circuit-pattern)"></rect>
+        </svg>
+        
+        {/* Neural network nodes */}
+        <div className="absolute inset-0">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={`node-${i}`}
+              className="absolute w-2 h-2 bg-primary/50 rounded-full"
+              style={{ 
+                left: `${20 + i * 10}%`,
+                top: `${30 + (i % 3) * 15}%`
+              }}
+              animate={{
+                scale: [1, 1.5, 1],
+                opacity: [0.5, 1, 0.5],
+              }}
+              transition={{
+                duration: 2 + i % 3,
+                repeat: Infinity,
+                delay: i * 0.2
+              }}
+            />
+          ))}
+          
+          {/* Connection lines between nodes */}
+          <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <motion.line 
+              x1="20%" y1="30%" 
+              x2="50%" y2="45%" 
+              stroke="rgba(74, 144, 226, 0.3)" 
+              strokeDasharray="5,5"
+              animate={{ 
+                opacity: [0.2, 0.6, 0.2] 
+              }}
+              transition={{ 
+                duration: 3, 
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            />
+            <motion.line 
+              x1="30%" y1="45%" 
+              x2="60%" y2="30%" 
+              stroke="rgba(74, 144, 226, 0.3)" 
+              strokeDasharray="5,5"
+              animate={{ 
+                opacity: [0.3, 0.7, 0.3] 
+              }}
+              transition={{ 
+                duration: 4, 
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            />
+          </svg>
+        </div>
       </div>
       
       {/* Hero Section */}
@@ -140,15 +203,6 @@ const LandingPage = () => {
                   Start Engineering 
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-white/20 hover:bg-white/10 transition-all duration-300 text-lg"
-                onClick={() => setIsSettingsOpen(true)}
-              >
-                Configure Settings
               </Button>
             </motion.div>
           </motion.div>
@@ -207,7 +261,7 @@ const LandingPage = () => {
               
               <h3 className="text-xl font-semibold text-white mb-2">Akshay Patil</h3>
               <p className="text-white/70 max-w-lg mx-auto mb-6">
-                A passionate developer with expertise in AI technologies and web development. 
+                A passionate full-stack developer with expertise in AI technologies and web development. 
                 Akshay specializes in creating intuitive, powerful tools that leverage cutting-edge 
                 AI capabilities to solve real-world problems.
               </p>
@@ -259,7 +313,7 @@ const LandingPage = () => {
               >
                 <Link to="/tool" className="flex items-center gap-2">
                   <span>Try Promgine Now</span>
-                  <MousePointer className="w-5 h-5 animate-bounce" />
+                  <ArrowRight className="w-5 h-5 animate-bounce" />
                 </Link>
               </Button>
             </div>
@@ -270,8 +324,8 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="border-t border-white/10 py-6 px-4 text-center backdrop-blur-sm relative z-10">
         <div className="max-w-6xl mx-auto">
-          <motion.p 
-            className="text-white/50"
+          <motion.div 
+            className="text-white/50 inline-block"
             animate={{ 
               opacity: [0.5, 1, 0.5],
               scale: [1, 1.02, 1],
@@ -290,14 +344,9 @@ const LandingPage = () => {
             >
               Created with ❤️ by Akshay Patil
             </a>
-          </motion.p>
+          </motion.div>
         </div>
       </footer>
-      
-      <SettingsDialog
-        open={isSettingsOpen}
-        onOpenChange={setIsSettingsOpen}
-      />
     </div>
   );
 };
